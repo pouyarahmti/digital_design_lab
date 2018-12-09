@@ -6,11 +6,11 @@ module memory(d_out , clock, address, d_in, read, write );
 	input read;
 	input write;
 
-	reg [63:0] memory [512:0];
+	reg [63:0] memory [0:512];
 	
 	
 		
-	assign d_out = read == 1 ? memory[address] : 0;
+	assign d_out = (read == 1 )? memory[address] : 64'hz;
 	
 	always @(posedge clock) begin
 		if(write == 1) begin
