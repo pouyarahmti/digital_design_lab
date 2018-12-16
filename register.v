@@ -1,3 +1,4 @@
+
 module register(old_pc ,clock , new_pc, write, reset);
 	input clock;
 	input write;
