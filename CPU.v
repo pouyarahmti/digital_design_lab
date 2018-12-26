@@ -49,7 +49,6 @@ module CPU();
 		.old_pc(pc_output),
 		.clock(myclock),
 		.new_pc(mux_after_shift_adder_to_pc),
-		.write(),
 		.reset(pcReset)
 	);
 

@@ -1,7 +1,6 @@
 
-module register(old_pc ,clock , new_pc, write, reset);
+module register(old_pc ,clock , new_pc, reset);
 	input clock;
-	input write;
 	input [63:0] new_pc;
 	input reset;
 	output reg  [63:0] old_pc;
