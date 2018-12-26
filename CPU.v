@@ -20,14 +20,20 @@ module CPU();
 	wire [63:0] mux_after;
 
 	wire zero;
-	
+
 	wire regtoloc, branch, memread, memtoreg, aluop0 , aluop1 , memwrite, alusrc, regwrite;
 
-	clock(
+	reg pcReset;
+	initial begin
+		#100 pcReset = 1'b1;
+		#100 pcReset = 1'b0;
+	end
+
+	clock MyClock(
 		.clk(myclock)
 	);
 
-	registerbank(
+	registerbank MyRegisterbank(
 		.clk(myclock),
 		.write(regwrite),
 		.address1(instruction_memory_output[9:5]),
@@ -39,15 +45,15 @@ module CPU();
 	);
 
 	//the pc
-	register(
+	register MyRegister(
 		.old_pc(pc_output),
 		.clock(myclock),
 		.new_pc(mux_after_shift_adder_to_pc),
 		.write(),
-		.reset()
+		.reset(pcReset)
 	);
 
-	ALU(.
+	ALU MyAlu(.
 		num1(register_bank_output1_to_alu), 
 		.num2(mux_after_register_bank_to_alu), 
 		.op(alu_control_to_alu), 
@@ -55,60 +61,60 @@ module CPU();
 		.out(alu_result) 
 	);
 
-	mux_befor_register_bank( 
+	mux mux_befor_register_bank( 
 		.out(mux_befor_register_bank_to_register_bank), 
 		.address(regtoloc),
 		.in1(instruction_memory_output[20:16]),
 		.in2(instruction_memory_output[4:0])
 	);
-	mux_after_register_bank( 
+	mux mux_after_register_bank( 
 		.out(mux_after_register_bank_to_alu), 
 		.address(alusrc),
 		.in1(register_bank_output2_to_mux_after_register_bank),
 		.in2(data_after_sign_extend)
 	);
-	mux_after_memory( 
+	mux mux_after_memory( 
 		.out(mux_after_memory_to_register_bank), 
 		.address(memtoreg),
 		.in1(alu_result),
 		.in2(memory_output_to_mux_after_memory)
 	);
-	mux_after_shift_adder( 
+	mux mux_after_shift_adder( 
 		.out(mux_after_shift_adder_to_pc), 
 		.address(zero&branch),
 		.in1(adder_for_pc_to_mux_after_shift_adder),
 		.in2(adder_for_shift_to_mux_after_shift_adder)
 	);
 
-	adder_for_shift(
+	adder MyAdderForShift(
 		.in1(pc_output),
 		.in2(shift_to_shift_adder),
 		.out(adder_for_shift_to_mux_after_shift_adder)
 	);
 
-	adder_for_pc(
+	adder MyAdderForPc(
 		.in1(pc_output),
 		.in2(4),
 		.out(adder_for_pc_to_mux_after_shift_adder)
 	);
 	
-	signextend(
+	signextend MySignExtend(
 		.instruction(instruction_memory_output[31:0]),
 		.extended_address(data_after_sign_extend)
 	);
 	
-	InstructionMemory( 
+	InstructionMemory MyInstructionMemory( 
 		.address(pc_output),
 		.out(instruction_memory_output)
 	);
 
-	ALU_Control(
+	ALU_Control MyAluControl(
 		.ALU_Op({aluop1,aluop0}),//this my will be wrong 
 		.Op_Code(instruction_memory_output[31:21]),
 		.ALU_In(alu_control_to_alu)
 	);
 	
-	Controller(
+	Controller MyController(
 		.Instruction(instruction_memory_output[31:21]), 
 		.Reg2Loc(regtoloc), 
 		.ALUSrc(alusrc), 
@@ -120,7 +126,7 @@ module CPU();
 		.ALUOp1(aluop1), 
 		.ALUOp0(aluop0)
 	);
-	memory(
+	memory myMemory(
 		.d_out(memory_output_to_mux_after_memory), 
 		.clock(myclock),
 		.address(alu_result),
@@ -129,7 +135,7 @@ module CPU();
 		.write(memwrite) 
 	);
 	
-	shift_2bit(
+	shift_2bit MyTwoBitShift(
 		.in(data_after_sign_extend),
 		.out(shift_to_shift_adder)
 	);

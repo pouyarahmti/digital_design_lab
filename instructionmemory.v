@@ -1,5 +1,5 @@
 module InstructionMemory( address , out);
-	parameter delay = 5;
+	parameter delay = 10;
 
 	input [64:0] address;
 
@@ -8,14 +8,21 @@ module InstructionMemory( address , out);
 	reg [7:0] memory [0:511];
 
 	reg [63:0] i;
-	initial begin 
-			for (i=0; i<511; i=i+1) memory[i] = 8'b0;
 
+	initial begin 
+		for (i=0; i<511; i=i+1) memory[i] = 8'b0;
+				
+		{memory[0 + 3], memory[0 + 2], memory[0 + 1], memory[0 + 0]} = 32'h8b1f03e5;
+		{memory[4 + 3], memory[4 + 2], memory[4 + 1], memory[4 + 0]} = 32'hf84000a4;
+		{memory[8 + 3], memory[8 + 2], memory[8 + 1], memory[8 + 0]} = 32'h8b040086;
+		{memory[12 + 3], memory[12 + 2], memory[12 + 1], memory[12 + 0]} = 32'hf80010a6;
 	end
 
-	assign #delay out[7 : 0] = memory[address];
-	assign #delay out[15 : 8] = memory[address + 1];
-	assign #delay out[23 : 16] = memory[address + 2];
-	assign #delay out[31 : 24] = memory[address + 3];
+	assign #delay out = {
+		memory[address + 3],
+		memory[address + 2],
+		memory[address + 1],
+		memory[address + 0]
+	};
 
 endmodule
