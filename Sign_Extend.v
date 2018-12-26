@@ -5,7 +5,7 @@ module signextend(instruction , extended_address );
 	
 	wire opcode = instruction[31:30]; 
 	
-	always @(*) begin
+	always @(instruction) begin
 		case(opcode) 
 			2'b00: extended_address = {{38{instruction[25]}} ,instruction[25:0] };
 			2'b10: extended_address = {{45{instruction[23]}} ,instruction[23:5] };
