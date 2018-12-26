@@ -17,7 +17,7 @@ module CPU();
 	wire [63:0] memory_output_to_mux_after_memory;
 	wire [63:0] mux_after_memory_to_register_bank;
 	wire [63:0] shift_to_shift_adder;
-	wire [63:0] mux_after
+	wire [63:0] mux_after;
 
 	wire zero;
 	
@@ -133,6 +133,6 @@ module CPU();
 		.in(data_after_sign_extend),
 		.out(shift_to_shift_adder)
 	);
-)
+
 		
 endmodule
