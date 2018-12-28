@@ -1,19 +1,21 @@
-module ALU_Control(ALU_Op, Op_Code, ALU_In);
+module ALU_Control(ALU_Op, instruction, ALU_In);
 	
 	input [1:0] ALU_Op;
-	input [10:0] Op_Code;
+	input [31:0] instruction;
 	output reg [3:0] ALU_In;
-	always @(ALU_Op, Op_Code) begin
-		 case(ALU_Op) 
-		     2'b00: ALU_In = 4'b0010;
-		     2'b01: ALU_In = 4'b0111;
-		     2'b10:
-			casex(Op_Code)
-				11'b11xxxxxxxxx: ALU_In = 4'b0110;
-				11'b101xxxxxxxx: ALU_In = 4'b0001;
-				11'b10001010xxx: ALU_In = 4'b0000;
-				11'b10001011xxx: ALU_In = 4'b0010;
+	
+	wire [5:0] check_bits;
+	assign check_bits = {ALU_Op ,instruction[30],instruction[29],instruction[24]};
+	//Alu controller samed
+	always @( check_bits ) begin	
+		ALU_In = 4'bz;
+			casex(check_bits)
+				5'b00xxx: ALU_In = 4'b0010;
+				5'bx1xxx: ALU_In = 4'b0111;
+				5'b1x001: ALU_In = 4'b0010;
+				5'b1x101: ALU_In = 4'b0110;
+				5'b10000: ALU_In = 4'b0000;
+				5'b1x010: ALU_In = 4'b0001;
 			endcase
-		  endcase
 	end
 endmodule 

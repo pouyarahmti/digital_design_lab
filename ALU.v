@@ -5,11 +5,11 @@ module ALU(num1, num2, op, z, out );
 	output  z;
 	output reg [63:0] out;
 
-	assign z = (out == 0 ) ? 1 : 0 ;
+	assign z = (out) ? 0 : 1 ; 
 
 	always @(num1 , num2 , op) begin 
-	
-		case(op)
+		out = 64'hz;	
+		case(op)	
 			4'b0000:out = num1&num2;
 			4'b0001:out = num1|num2;
 			4'b0010:out = num1+num2;

@@ -7,20 +7,30 @@ module memory(d_out , clock, address, d_in, read, write );
 	input read;
 	input write;
 
-	reg [63:0] memory [0:size - 1];
-	
-	assign output_data = read == 1 ? {memory[address + 7],
+	reg [7:0] memory [0:size - 1];
+	//memory samed
+	integer i;
+	initial begin
+		for(i=0;i<256;i=i+1)
+			memory[i] = i;
+	end
+	assign #5 d_out = read ? {
+			memory[address + 7],
 			memory[address + 6],
 			memory[address + 5],
 			memory[address + 4],
 			memory[address + 3],
 			memory[address + 2],
 			memory[address + 1],
-			memory[address + 0]} : 63'bz;
+			memory[address + 0]
+			} : 64'bz;
 	
+
+
+
 		
 	always @(posedge clock) begin
-		if(write == 1) begin
+		if(write == 1'b1) begin
 			memory[address + 7] = d_in[63:56];
 			memory[address + 6] = d_in[55:48];
 			memory[address + 5] = d_in[47:40];

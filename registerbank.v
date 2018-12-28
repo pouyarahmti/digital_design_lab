@@ -8,9 +8,16 @@ module registerbank(clk , write , address1  , address2 , address3 , input_data ,
 
 	reg [63:0] registers [0:31];
 
+	integer i;
+	
+	initial begin
+		for(i=0;i<32;i=i+1)
+			registers[i] = i;
+	end
+	
 	assign output_data1 = registers[address1];
 	assign output_data2 = registers[address2];
-
+	
 	always @ (posedge clk) begin 
 		if(write)	begin
 			registers[address3] = input_data;
